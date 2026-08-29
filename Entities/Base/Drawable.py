@@ -13,9 +13,9 @@ class Drawable(Entity):
         self.symbol: str = _symbol
         self.color: str = _color
 
-    def Draw(self, stdscr):
+    def Draw(self, _stdscr : curses.window):
         try:
-            stdscr.addstr(self.posY, self.posX, self.symbol, curses.color_pair(self.game.colors[self.color]))
+            _stdscr.addstr(self.posY, self.posX, self.symbol, curses.color_pair(self.game.colors[self.color]))
         except Exception:
             print(f"{self.posX} {self.posY}")
 

@@ -5,7 +5,6 @@ from Entities.Base.Drawable import Drawable
 from Entities.Pacman import Pacman
 from Entities.Wall import Wall
 
-
 class Game:
     def __init__(self):
         self.entities = []
@@ -13,13 +12,17 @@ class Game:
         self.sizeY : int = 15
         self.colors: dict[str, int] = {}
 
-    def Run(self, stdscr : curses.window):
-        self.InitGame(stdscr)
-        self.UpdateGame(stdscr)
+    def Run(self, _stdscr : curses.window):
+        self.InitGame(_stdscr)
+        self.UpdateGame(_stdscr)
 
-    def InitGame(self, stdscr: curses.window):
+    def InitGame(self, _stdscr: curses.window):
+        # Cursor ausblenden
         curses.curs_set(0)
+        # Farben erlauben
         curses.start_color()
+        # Input non blocking
+        _stdscr.nodelay(True)
 
         self.colors["RED"] = 1
         self.colors["GREEN"] = 2
@@ -33,10 +36,9 @@ class Game:
         curses.init_pair(self.colors["BLUE"], curses.COLOR_BLUE, curses.COLOR_BLACK)
         curses.init_pair(self.colors["WHITE"], curses.COLOR_WHITE, curses.COLOR_BLACK)
 
+        _stdscr.addstr(0, 5, 'Willkommen bei PythonMan')
 
-        stdscr.addstr(0, 5, 'Willkommen bei PythonMan')
-
-        stdscr.refresh()
+        _stdscr.refresh()
 
         curses.napms(2000)
 
@@ -48,31 +50,24 @@ class Game:
             self.AddEntity(Wall(self, 0, i +1))
             self.AddEntity(Wall(self, self.sizeX - 1, i +1))
 
-
         self.AddEntity(Pacman(self, int(self.sizeX / 2), int (self.sizeY / 2)))
 
-
-
-        #self.entities.append(Entity('c',self.sizeX / 2,self.sizeY / 2, '\033[33m'))
-
-    def UpdateGame(self, stdscr: curses.window):
+    def UpdateGame(self, _stdscr: curses.window):
         while True:
             for e in self.entities:
                 if isinstance(e, Updateable):
-                    e.Update()
+                    e.Update(_stdscr)
 
-
-            stdscr.clear()
+            _stdscr.clear()
             for e in self.entities:
                 if isinstance(e, Drawable):
-                    e.Draw(stdscr)
+                    e.Draw(_stdscr)
 
-            stdscr.refresh()
+            _stdscr.refresh()
             curses.napms(100)
 
+    def AddEntity(self, _entity):
+        self.entities.append(_entity)
 
-    def AddEntity(self, entity):
-        self.entities.append(entity)
-
-    def RemoveEntity(self, entity):
-        self.entities.remove(entity)
+    def RemoveEntity(self, _entity):
+        self.entities.remove(_entity)
