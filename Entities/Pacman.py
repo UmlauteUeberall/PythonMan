@@ -1,34 +1,39 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from Helper.Vector2 import Vector2
 
 from Entities.Base.Drawable import Drawable
-from Entities.Base.Updateable import Updateable
+from Entities.Base.Updateable import Updatable
 
 import curses
 
 if TYPE_CHECKING:
     from Game import Game
-class Pacman(Drawable, Updateable):
-    def __init__(self, _game : Game, _posX : int, _posY : int):
-        Drawable.__init__(self, _game,"O", "YELLOW", _posX, _posY)
-        Updateable.__init__(self)
+class Pacman(Drawable, Updatable):
+    def __init__(self, _game : Game, _pos : Vector2):
+        Drawable.__init__(self, _game,"O", "YELLOW", _pos)
+        Updatable.__init__(self)
 
     def Update(self, _stdscr):
 
         key = _stdscr.getch()
-        deltaX : int = 0
-        deltaY : int = 0
+        delta : Vector2  = Vector2(0,0)
         if key == curses.KEY_UP:
-            deltaY = -1
+            delta.Y = -1
         elif key == curses.KEY_DOWN:
-            deltaY = 1
+            delta.Y = 1
         elif key == curses.KEY_LEFT:
-            deltaX = -1
+            delta.X = -1
         elif key == curses.KEY_RIGHT:
-            deltaX = 1
+            delta.X = 1
 
-        self.posX += deltaX
-        self.posY += deltaY
+        if delta.Length() == 0:
+            return
 
-        self.posX = (self.posX + self.game.sizeX) % self.game.sizeX
-        self.posY = (self.posY + self.game.sizeY) % self.game.sizeY
+        newPos = self.pos + delta
+        newPos = newPos.Donut(self.game.size)
+
+        if self.game.IsSpaceFree(newPos):
+            self.pos = newPos
+            self.game.Collect(newPos)
+

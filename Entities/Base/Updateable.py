@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import curses
 
-class Updateable:
+class Updatable:
     @abstractmethod
     def Update(self, _stdscr : curses.window) -> None:
         pass
