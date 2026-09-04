@@ -56,4 +56,4 @@ class Menu(BaseScene):
 
 
     def CleanUp(self):
-        pass
+        self.isRunning = 0

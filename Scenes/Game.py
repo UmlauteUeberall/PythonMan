@@ -122,6 +122,7 @@ class Game(BaseScene):
 
         _stdscr.addstr(3, InfoX, f"Score:           {self.score}")
         _stdscr.addstr(4, InfoX, f"Press q for exit")
+        _stdscr.addstr(5, InfoX, f"Press r for restart")
 
     def ShowWinScreen(self, _stdscr: curses.window):
         curses.flushinp()
