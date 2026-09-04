@@ -6,7 +6,7 @@ from Entities.Base.Drawable import Drawable
 from Helper.Vector2 import Vector2
 
 if TYPE_CHECKING:
-    from Game import Game
+    from Scenes.Game import Game
 
 class Coin(Drawable, Collectable):
     def __init__(self, _game : Game, _pos : Vector2):

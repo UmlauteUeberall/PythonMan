@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from Helper.Vector2 import Vector2
 
 if TYPE_CHECKING:
-    from Game import Game
+    from Scenes.Game import Game
 
 class Entity:
     def __init__(self, _game : Game, _pos: Vector2):

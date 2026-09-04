@@ -8,7 +8,7 @@ from Entities.Base.Updateable import Updatable
 import curses
 
 if TYPE_CHECKING:
-    from Game import Game
+    from Scenes.Game import Game
 class Pacman(Drawable, Updatable):
     def __init__(self, _game : Game, _pos : Vector2):
         Drawable.__init__(self, _game,"O", "YELLOW", _pos)
@@ -16,15 +16,14 @@ class Pacman(Drawable, Updatable):
 
     def Update(self, _stdscr):
 
-        key = _stdscr.getch()
         delta : Vector2  = Vector2(0,0)
-        if key == curses.KEY_UP:
+        if self.game.currentKey == curses.KEY_UP:
             delta.Y = -1
-        elif key == curses.KEY_DOWN:
+        elif self.game.currentKey == curses.KEY_DOWN:
             delta.Y = 1
-        elif key == curses.KEY_LEFT:
+        elif self.game.currentKey == curses.KEY_LEFT:
             delta.X = -1
-        elif key == curses.KEY_RIGHT:
+        elif self.game.currentKey == curses.KEY_RIGHT:
             delta.X = 1
 
         if delta.Length() == 0:
