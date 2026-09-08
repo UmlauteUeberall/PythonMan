@@ -26,6 +26,7 @@ class Game(BaseScene):
 
         self.entities = []
         self.size : Vector2 = Vector2(30, 20)
+        #self.size : Vector2 = Vector2(5, 5)
         self.colors: dict[str, int] = {}
         self.startTime : float = 0
         self.frameCounter : int = 0

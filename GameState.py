@@ -1,6 +1,6 @@
 from enum import Enum
 
-class GameState(Enum):
+class GameStates(Enum):
     RUNNING = 1
     PAUSE = 2
     WON = 3
