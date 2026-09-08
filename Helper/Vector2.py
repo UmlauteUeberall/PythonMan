@@ -14,5 +14,5 @@ class Vector2:
     def Donut(self, worldSize : Vector2) -> Vector2:
         return Vector2((self.X + worldSize.X) % worldSize.X, (self.Y + worldSize.Y) % worldSize.Y)
 
-    def Length(self) -> float:
+    def SQRLength(self) -> float:
         return self.X * self.X + self.Y * self.Y

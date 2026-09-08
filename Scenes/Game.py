@@ -14,6 +14,7 @@ from Entities.Base.Updateable import Updatable
 from Entities.Base.Drawable import Drawable
 from Entities.Coin import Coin
 from Entities.Pacman import Pacman
+from Entities.Ghost import Ghost
 from Entities.Wall import Wall
 from Helper.Vector2 import Vector2
 from Entities.Base.Solid import Solid
@@ -48,12 +49,14 @@ class Game(BaseScene):
         self.colors["YELLOW"] = 3
         self.colors["BLUE"] = 4
         self.colors["WHITE"] = 5
+        self.colors["PINK"] = 6
 
         curses.init_pair(self.colors["RED"], curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(self.colors["GREEN"], curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(self.colors["YELLOW"], curses.COLOR_YELLOW, curses.COLOR_BLACK)
         curses.init_pair(self.colors["BLUE"], curses.COLOR_BLUE, curses.COLOR_BLACK)
         curses.init_pair(self.colors["WHITE"], curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(self.colors["PINK"], curses.COLOR_MAGENTA, curses.COLOR_BLACK)
 
         for i in range(self.size.X):
             if i != int((self.size.X - 2) / 2):
@@ -70,6 +73,10 @@ class Game(BaseScene):
                 if self.IsSpaceFree(Vector2(x, y)) and not( x == int(self.size.X / 2) and y == int(self.size.Y / 2)):
                     self.AddEntity(Coin(self, Vector2(x, y)))
 
+        self.AddEntity(Ghost(self, Vector2(1 ,1), "RED"))
+        self.AddEntity(Ghost(self, Vector2(self.size.X - 2, 1), "BLUE"))
+        self.AddEntity(Ghost(self, Vector2(1, self.size.Y - 2), "PINK"))
+        self.AddEntity(Ghost(self, Vector2(self.size.X - 2, self.size.Y - 2), "GREEN"))
         self.AddEntity(Pacman(self, Vector2(int(self.size.X / 2), int (self.size.Y / 2))))
 
     def UpdateGame(self, _stdscr: curses.window):
@@ -159,6 +166,14 @@ class Game(BaseScene):
                 self.score += e.score
                 self.RemoveEntity(e)
 
+    def GetPlayerPos(self) -> Vector2:
+        pacman = next((entity for entity in self.entities if isinstance(entity, Pacman)), None)
+
+        if pacman is not None:
+            return pacman.pos
+        else:
+            return Vector2(0, 0)
+
     def CleanUp(self):
         self.entities = []
         self.score = 0
@@ -167,3 +182,4 @@ class Game(BaseScene):
         self.colors = {}
         self.isRunning = False
         self.currentKey = 0
+
