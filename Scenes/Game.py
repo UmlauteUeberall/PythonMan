@@ -174,6 +174,12 @@ class Game(BaseScene):
         else:
             return Vector2(0, 0)
 
+    def GetPath(self, _from : Vector2, _to : Vector2) -> list[Vector2]:
+        walkableArea = [[True] * self.size.X for _ in range(self.size.Y)]
+        for e in self.entities:
+            if isinstance(e, Solid) and e.pos == pos:
+                walkableArea[pos.X][pos.Y] = False
+        
     def CleanUp(self):
         self.entities = []
         self.score = 0
