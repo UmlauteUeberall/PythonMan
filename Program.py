@@ -26,7 +26,6 @@ class Program:
         # Input non blocking
         _stdscr.nodelay(True)
 
-
         currentScene : BaseScene
 
         while self.isRunning:

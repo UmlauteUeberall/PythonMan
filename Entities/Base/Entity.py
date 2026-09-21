@@ -6,6 +6,6 @@ if TYPE_CHECKING:
     from Scenes.Game import Game
 
 class Entity:
-    def __init__(self, _game : Game, _pos: Vector2):
-        self.game = _game
-        self.pos: Vector2 = _pos
+    def __init__(self, _game : Game, _pos : Vector2):
+        self.game : Game = _game
+        self.pos : Vector2 = _pos

@@ -4,6 +4,8 @@ import time
 
 from typing import TYPE_CHECKING
 
+from Entities.Base.Entity import Entity
+from Pathfinding.PathNode import PathNode
 from ProgramState import ProgramState
 
 if TYPE_CHECKING:
@@ -22,25 +24,25 @@ from Scenes.BaseScene import BaseScene
 
 
 class Game(BaseScene):
-    def __init__(self, _program: Program):
+    def __init__(self, _program : Program):
         BaseScene.__init__(self, _program)
 
-        self.entities = []
+        self.entities : list[Entity] = []
         self.size : Vector2 = Vector2(30, 20)
         #self.size : Vector2 = Vector2(5, 5)
-        self.colors: dict[str, int] = {}
+        self.colors : dict[str, int] = {}
         self.startTime : float = 0
         self.frameCounter : int = 0
         self.score : int = 0
         self.currentKey : int = 0
+        self.PathNodes : list[PathNode] = []
 
     def Run(self, _stdscr : curses.window):
         self.InitGame(_stdscr)
         self.UpdateGame(_stdscr)
 
-    def InitGame(self, _stdscr: curses.window):
+    def InitGame(self, _stdscr : curses.window):
         self.isRunning = True
-
 
         self.startTime = time.monotonic()
 
@@ -79,7 +81,9 @@ class Game(BaseScene):
         self.AddEntity(Ghost(self, Vector2(self.size.X - 2, self.size.Y - 2), "GREEN"))
         self.AddEntity(Pacman(self, Vector2(int(self.size.X / 2), int (self.size.Y / 2))))
 
-    def UpdateGame(self, _stdscr: curses.window):
+        self.GeneratePathFindingGrid()
+
+    def UpdateGame(self, _stdscr : curses.window):
         while self.isRunning:
             self.currentKey = _stdscr.getch()
 
@@ -107,7 +111,6 @@ class Game(BaseScene):
 
             count = sum(1 for entity in self.entities if isinstance(entity, Coin))
             if count == 0:
-
                 self.ShowWinScreen(_stdscr)
 
                 self.isRunning = False
@@ -116,32 +119,30 @@ class Game(BaseScene):
 
             curses.napms(100)
 
-
-    def DrawInfo(self, _stdscr: curses.window):
-        InfoX = self.size.X + 2
+    def DrawInfo(self, _stdscr : curses.window):
+        InfoX : int = self.size.X + 2
 
         _stdscr.addstr(1, InfoX, f"Frames:          {self.frameCounter}")
         self.frameCounter += 1
 
-        elapsed = int(time.monotonic() - self.startTime)
-        minutes = elapsed // 60
-        seconds = elapsed % 60
+        elapsed : int = int(time.monotonic() - self.startTime)
+        minutes : int = elapsed // 60
+        seconds : int = elapsed % 60
         _stdscr.addstr(2, InfoX, f"Passed Time:     {minutes:02}:{seconds:02}")
 
         _stdscr.addstr(3, InfoX, f"Score:           {self.score}")
         _stdscr.addstr(4, InfoX, f"Press q for exit")
         _stdscr.addstr(5, InfoX, f"Press r for restart")
 
-    def ShowWinScreen(self, _stdscr: curses.window):
+    def ShowWinScreen(self, _stdscr : curses.window):
         curses.flushinp()
-
         _stdscr.erase()
 
         _stdscr.addstr(5, 5, f"You are a winner!")
 
-        elapsed = int(time.monotonic() - self.startTime)
-        minutes = elapsed // 60
-        seconds = elapsed % 60
+        elapsed : int = int(time.monotonic() - self.startTime)
+        minutes : int  = elapsed // 60
+        seconds : int  = elapsed % 60
         _stdscr.addstr(6, 5, f"Finnished in {minutes:02}:{seconds:02}!")
         _stdscr.addstr(7, 5, f"Score {self.score}!")
 
@@ -154,15 +155,15 @@ class Game(BaseScene):
     def RemoveEntity(self, _entity):
         self.entities.remove(_entity)
 
-    def IsSpaceFree(self, pos: Vector2) -> bool:
+    def IsSpaceFree(self, _pos : Vector2) -> bool:
         for e in self.entities:
-            if isinstance(e, Solid) and e.pos == pos:
+            if isinstance(e, Solid) and e.pos == _pos:
                 return False
         return True
 
-    def Collect(self, pos: Vector2):
+    def Collect(self, _pos : Vector2):
         for e in self.entities:
-            if isinstance(e, Collectable) and e.pos == pos:
+            if isinstance(e, Collectable) and e.pos == _pos:
                 self.score += e.score
                 self.RemoveEntity(e)
 
@@ -174,11 +175,56 @@ class Game(BaseScene):
         else:
             return Vector2(0, 0)
 
-    def GetPath(self, _from: Vector2, _to: Vector2) -> list[Vector2]:
-        walkableArea = [[True] * self.size.X for _ in range(self.size.Y)]
+    def GeneratePathFindingGrid(self):
+        nodes: list[PathNode] = []
         for e in self.entities:
-            if isinstance(e, Solid):
-                walkableArea[e.pos.X][e.pos.Y] = False
+            if not isinstance(e, Solid):
+                nodes.append(PathNode(e.pos))
+
+        for node in nodes:
+            left = next(
+                (x for x in nodes
+                 if x.pos == (node.pos + Vector2(-1, 0)).Donut(self.size)),
+                None
+            )
+
+            up = next(
+                (x for x in nodes
+                 if x.pos == (node.pos + Vector2(0, -1)).Donut(self.size)),
+                None
+            )
+
+            if left is not None:
+                node.AddNeighbour(left)
+                left.AddNeighbour(node)
+            if up is not None:
+                node.AddNeighbour(up)
+                up.AddNeighbour(node)
+
+    def ResetNodes(self):
+        for node in self.PathNodes:
+            node.Reset()
+
+    def GetPath(self, _from : Vector2, _to : Vector2) -> list[Vector2]:
+        self.ResetNodes()
+
+        startNode = next(
+            (x for x in self.PathNodes
+             if x.pos == _from),
+            None
+        )
+
+        endNode = next(
+            (x for x in self.PathNodes
+             if x.pos == _to),
+            None
+        )
+
+        openlist : list[PathNode] = []
+        openlist.append(startNode)
+
+
+
         
     def CleanUp(self):
         self.entities = []

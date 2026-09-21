@@ -16,7 +16,7 @@ class Ghost(Drawable, Updatable):
         Updatable.__init__(self)
 
     def Update(self, _stdscr):
-        target = self.game.GetPlayerPos()
+        target : Vector2 = self.game.GetPlayerPos()
         direction : Vector2 = self.DonutDirection(target, self.game.size)
         if abs(direction.X) > abs(direction.Y):
             direction.Y = 0
@@ -26,16 +26,16 @@ class Ghost(Drawable, Updatable):
         if direction.SQRLength() == 0:
             return
 
-        direction = direction / direction.Length()
+        direction : Vector2 = direction / direction.Length()
 
-        newPos = self.pos + direction
+        newPos : Vector2 = self.pos + direction
         newPos = newPos.Donut(self.game.size)
 
         if self.game.IsSpaceFree(newPos):
             self.pos = newPos
 
     def DonutDirection(self, other, size : Vector2) -> Vector2:
-        direction = other - self.pos
+        direction : Vector2 = other - self.pos
 
         if abs(direction.X) > size.X / 2:
             if direction.X > 0:

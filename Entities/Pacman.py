@@ -15,7 +15,6 @@ class Pacman(Drawable, Updatable):
         Updatable.__init__(self)
 
     def Update(self, _stdscr):
-
         delta : Vector2  = Vector2(0,0)
         if self.game.currentKey == curses.KEY_UP:
             delta.Y = -1
@@ -29,7 +28,7 @@ class Pacman(Drawable, Updatable):
         if delta.SQRLength() == 0:
             return
 
-        newPos = self.pos + delta
+        newPos : Vector2 = self.pos + delta
         newPos = newPos.Donut(self.game.size)
 
         if self.game.IsSpaceFree(newPos):

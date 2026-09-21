@@ -9,10 +9,10 @@ from Entities.Base.Entity import Entity
 
 
 class Drawable(Entity):
-    def __init__(self, _game: Game, _symbol: str, _color: str, _pos: Vector2):
+    def __init__(self, _game: Game, _symbol : str, _color : str, _pos : Vector2):
         Entity.__init__(self, _game, _pos)
-        self.symbol: str = _symbol
-        self.color: str = _color
+        self.symbol : str = _symbol
+        self.color : str = _color
 
     def Draw(self, _stdscr : curses.window):
         try:

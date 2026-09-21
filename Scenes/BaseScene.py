@@ -12,13 +12,13 @@ if TYPE_CHECKING:
 
 class BaseScene:
     def __init__(self, _program : Program):
-        self.isRunning = False
-        self.program = _program
+        self.isRunning : bool = False
+        self.program : Program = _program
 
     @abstractmethod
     def CleanUp(self) -> None:
         pass
 
     @abstractmethod
-    def Run(self, _stdscr: curses.window) -> None:
+    def Run(self, _stdscr : curses.window) -> None:
         pass
