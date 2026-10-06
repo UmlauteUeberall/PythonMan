@@ -176,11 +176,13 @@ class Game(BaseScene):
             return Vector2(0, 0)
 
     def GeneratePathFindingGrid(self):
-        nodes: list[PathNode] = []
+        nodes: list[list[PathNode]] = [[PathNode(Vector2(x, y)) for x in range(self.size.x)] for y in range(self.size.y)]
+        
         for e in self.entities:
-            if not isinstance(e, Solid):
-                nodes.append(PathNode(e.pos))
-
+            if isinstance(e, Solid):
+                nodes[e.pos.x][e.pos.y].walkable = False
+        
+                
         for node in nodes:
             left = next(
                 (x for x in nodes
